@@ -44,7 +44,7 @@ internal class DefaultJsonSerializer: JsonSerializer {
         var string = "["
         string += array
             .map { $0.serialize(self) }
-            .joinWithSeparator(",")
+            .joined(separator: ",")
         return string + "]"
     }
 
@@ -56,7 +56,7 @@ internal class DefaultJsonSerializer: JsonSerializer {
                 let serializedVal = val.serialize(self)
                 return "\(escapedKey):\(serializedVal)"
             }
-            .joinWithSeparator(",")
+            .joined(separator: ",")
         return string + "}"
     }
 
@@ -83,7 +83,7 @@ internal class PrettyJsonSerializer: DefaultJsonSerializer {
                 let serialized = val.serialize(self)
                 return indentString + serialized
             }
-            .joinWithSeparator(",\n")
+            .joined(separator: ",\n")
         return string + " ]"
     }
 
@@ -103,7 +103,7 @@ internal class PrettyJsonSerializer: DefaultJsonSerializer {
                 let serializedLine = "\(escapedKey): \(serializedValue)"
                 return indentString + serializedLine
             }
-            .joinWithSeparator(",\n")
+            .joined(separator: ",\n")
         string += " }"
         
         return string
@@ -112,6 +112,6 @@ internal class PrettyJsonSerializer: DefaultJsonSerializer {
     func indent() -> String {
         return Array(1...indentLevel)
             .map { _ in "  " }
-            .joinWithSeparator("")
+            .joined(separator: "")
     }
 }

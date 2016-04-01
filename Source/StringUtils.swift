@@ -62,7 +62,7 @@ extension String {
     public var escapedJsonString: String {
         let mapped = characters
             .map { escapeMapping[$0] ?? String($0) }
-            .joinWithSeparator("")
+            .joined(separator: "")
         return "\"" + mapped + "\""
     }
 }

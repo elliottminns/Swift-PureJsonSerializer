@@ -47,7 +47,7 @@ internal final class JsonDeserializer: Parser {
     
     // MARK: Initializer
     
-    internal required convenience init<ByteSequence: CollectionType where ByteSequence.Generator.Element == UInt8>(_ sequence: ByteSequence) {
+    internal required convenience init<ByteSequence: Collection where ByteSequence.Iterator.Element == UInt8>(_ sequence: ByteSequence) {
         self.init(Array(sequence))
     }
     
@@ -139,9 +139,7 @@ internal final class JsonDeserializer: Parser {
         
         buffer.append(0) // trailing nul
         
-        guard let string = String.fromCString(buffer) else {
-            throw InvalidStringError("Unable to parse CString", self)
-        }
+        let string = String(cString: buffer)
         
         return .StringValue(string)
     }
@@ -157,7 +155,7 @@ internal final class JsonDeserializer: Parser {
         guard let surrogateValue = parseEscapedUnicodeSurrogate() else { return nil }
 
         // two consecutive \u#### sequences represent 32 bit unicode characters
-        if nextChar == Char(ascii: "\\") && source[cur.advancedBy(2)] == Char(ascii: "u") {
+        if nextChar == Char(ascii: "\\") && source[cur.advanced(by: 2)] == Char(ascii: "u") {
                 advance(); advance()
                 guard let surrogatePairValue = parseEscapedUnicodeSurrogate() else { return nil }
                 
@@ -317,9 +315,9 @@ internal final class JsonDeserializer: Parser {
     private func expect(target: StaticString) -> Bool {
         guard cur != end else { return false }
         
-        if !isIdentifier(target.utf8Start.memory) {
+        if !isIdentifier(target.utf8Start.pointee) {
             // when single character
-            if target.utf8Start.memory == currentChar {
+            if target.utf8Start.pointee == currentChar {
                 advance()
                 return true
             } else {
@@ -332,9 +330,9 @@ internal final class JsonDeserializer: Parser {
         let c = columnNumber
         
         var p = target.utf8Start
-        let endp = p.advancedBy(Int(target.byteSize))
+        let endp = p.advanced(by: Int(target.utf8CodeUnitCount))
         while p != endp {
-            if p.memory != currentChar {
+            if p.pointee != currentChar {
                 cur = start // unread
                 lineNumber = l
                 columnNumber = c
@@ -391,9 +389,9 @@ extension JsonDeserializer.Char {
     }
 }
 
-extension CollectionType {
-    func prefixUntil(@noescape stopCondition: Generator.Element -> Bool) -> Array<Generator.Element> {
-        var prefix: [Generator.Element] = []
+extension Collection {
+    func prefixUntil(@noescape stopCondition: Iterator.Element -> Bool) -> Array<Iterator.Element> {
+        var prefix: [Iterator.Element] = []
         for element in self {
             guard !stopCondition(element) else { return prefix }
             prefix.append(element)

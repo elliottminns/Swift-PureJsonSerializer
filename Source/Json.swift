@@ -71,7 +71,7 @@ extension Json {
         return try JsonDeserializer(source).deserialize()
     }
     
-    public static func deserialize<ByteSequence: CollectionType where ByteSequence.Generator.Element == UInt8>(sequence: ByteSequence) throws -> Json {
+    public static func deserialize<ByteSequence: Collection where ByteSequence.Iterator.Element == UInt8>(sequence: ByteSequence) throws -> Json {
         return try JsonDeserializer(sequence).deserialize()
     }
 }
