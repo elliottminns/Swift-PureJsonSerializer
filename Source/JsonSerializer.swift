@@ -15,7 +15,7 @@ internal class DefaultJsonSerializer: JsonSerializer {
     
     required init() {}
     
-    internal func serialize(json: Json) -> String {
+    internal func serialize(_ json: Json) -> String {
         switch json {
         case .NullValue:
             return "null"
@@ -32,7 +32,7 @@ internal class DefaultJsonSerializer: JsonSerializer {
         }
     }
 
-    func serializeNumber(n: Double) -> String {
+    func serializeNumber(_ n: Double) -> String {
         if n == Double(Int64(n)) {
             return Int64(n).description
         } else {
@@ -40,7 +40,7 @@ internal class DefaultJsonSerializer: JsonSerializer {
         }
     }
 
-    func serializeArray(array: [Json]) -> String {
+    func serializeArray(_ array: [Json]) -> String {
         var string = "["
         string += array
             .map { $0.serialize(self) }
@@ -48,7 +48,7 @@ internal class DefaultJsonSerializer: JsonSerializer {
         return string + "]"
     }
 
-    func serializeObject(object: [String : Json]) -> String {
+    func serializeObject(_ object: [String : Json]) -> String {
         var string = "{"
         string += object
             .map { key, val in
@@ -69,7 +69,7 @@ internal class PrettyJsonSerializer: DefaultJsonSerializer {
         super.init()
     }
     
-    override internal func serializeArray(array: [Json]) -> String {
+    override internal func serializeArray(_ array: [Json]) -> String {
         indentLevel += 1
         defer {
             indentLevel -= 1
@@ -87,7 +87,7 @@ internal class PrettyJsonSerializer: DefaultJsonSerializer {
         return string + " ]"
     }
 
-    override internal func serializeObject(object: [String : Json]) -> String {
+    override internal func serializeObject(_ object: [String : Json]) -> String {
         indentLevel += 1
         defer {
             indentLevel -= 1

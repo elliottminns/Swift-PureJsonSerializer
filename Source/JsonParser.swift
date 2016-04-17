@@ -96,7 +96,7 @@ internal final class JsonDeserializer: Parser {
         }
     }
     
-    private func parseSymbol(target: StaticString, @autoclosure _ iftrue:  () -> Json) throws -> Json {
+    private func parseSymbol(_ target: StaticString, @autoclosure _ iftrue:  () -> Json) throws -> Json {
         guard expect(target) else {
             throw UnexpectedTokenError("expected \"\(target)\" but \(currentSymbol)", self)
         }
@@ -312,7 +312,7 @@ internal final class JsonDeserializer: Parser {
         return .ArrayValue(a)
     }
     
-    private func expect(target: StaticString) -> Bool {
+    private func expect(_ target: StaticString) -> Bool {
         guard cur != end else { return false }
         
         if !isIdentifier(target.utf8Start.pointee) {
@@ -347,7 +347,7 @@ internal final class JsonDeserializer: Parser {
     }
     
     // only "true", "false", "null" are identifiers
-    private func isIdentifier(c: Char) -> Bool {
+    private func isIdentifier(_ c: Char) -> Bool {
         switch c {
         case Char(ascii: "a") ... Char(ascii: "z"):
             return true
